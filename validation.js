@@ -2,9 +2,8 @@ const Joi = require("@hapi/joi");
 
 const dvdValidation = (data) => {
   const schema = Joi.object({
-    name: Joi.string()
-      .min(3)
-      .max(30)
+    title: Joi.string()
+      .max(50)
       .required()
   })
   return schema.validate(data);

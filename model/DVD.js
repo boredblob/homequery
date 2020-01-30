@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const dvdSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
-    max: 30
+    max: 50
   }
 });
 

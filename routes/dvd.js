@@ -19,14 +19,16 @@ router.get("/", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   if (compareDigests(JSON.stringify(req.body), req.headers["x-app-signature"])) {
+    const clean = {
+      title: purify(req.body.title)
+    };
+
     const {error} = dvdValidation(clean);
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
   
-    const dvd = new DVD({
-      name: purify(req.body.name)
-    });
+    const dvd = new DVD(clean);
   
     try {
       await dvd.save();
@@ -47,6 +49,32 @@ router.post("/remove", async (req, res) => {
       DVD.deleteOne({_id: id}, err => {
         if (!err) {
           res.status(200).send("Removed");
+        } else {
+          res.status(400).send(err);
+        }
+      });
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(403).send("Access Denied");
+  }
+});
+
+router.post("/edit", async (req, res) => {
+  if (compareDigests(JSON.stringify(req.body), req.headers["x-app-signature"])) {
+    const id = purify(req.body.id);
+    const title = purify(req.body.title);
+
+    const {error} = dvdValidation({title: title});
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      DVD.updateOne({_id: id}, {title: title}, err => {
+        if (!err) {
+          res.status(200).send("Updated");
         } else {
           res.status(400).send(err);
         }
