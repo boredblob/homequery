@@ -13,7 +13,7 @@ dotenv.config();
 router.get("/", async (req, res) => {
   DVD.find((err, dvd) => {
     if (err) {console.log(err)};
-    res.status(404).send(dvd);
+    res.status(200).send(dvd);
   });
 });
 
