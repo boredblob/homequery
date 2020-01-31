@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const dvdRoute = require("./routes/dvd");
+const bookRoute = require("./routes/book");
 
 mongoose.connect(
   process.env.DB_CONNECT, 
@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/dvd", dvdRoute);
+app.use("/book", bookRoute);
 
 const port = process.env.PORT || 8080;
 
