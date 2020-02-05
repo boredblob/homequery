@@ -1,15 +1,18 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const dvdRoute = require("./routes/dvd");
 const bookRoute = require("./routes/book");
+const userRoute = require("./routes/user");
 
 mongoose.connect(
   process.env.DB_CONNECT, 
   {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
   },
   () => {
     console.log("Connected to database");
@@ -18,14 +21,19 @@ mongoose.connect(
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-App-Signature");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
+    return res.status(200).send("Woot");
+  }
   next();
 });
 
 app.use(express.json());
 
-app.use("/dvd", dvdRoute);
-app.use("/book", bookRoute);
+app.use("/:username/dvd", dvdRoute);
+app.use("/:username/book", bookRoute);
+app.use("/user", userRoute);
 
 const port = process.env.PORT || 8080;
 
