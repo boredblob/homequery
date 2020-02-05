@@ -1,15 +1,28 @@
 const router = require("express").Router();
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../model/User");
+const itemSchema = require("../model/Item");
+
+const purify = require("../purify");
+const {userAuth} = require("../auth");
 
 router.post("/signup", async (req, res) => {
+  if (!req.body.username || !req.body.password) {
+    return res.status(400).json({message: "Username or password is not given."});
+  }
   const hash = bcrypt.hashSync(req.body.password, 10);
+
+  const username = purify(req.body.username);
+  if (username !== req.body.username) {
+    return res.status(400).json({message: "Username is not secure."});
+  }
 
   try {
     const user = await new Promise((res, rej) => {
-      User.findOne({username: req.body.username}, (err, user) => {
+      User.findOne({username: username}, (err, user) => {
         if (err) rej(err);
         res(user);
       });
@@ -23,12 +36,13 @@ router.post("/signup", async (req, res) => {
   }
 
   const user = new User({
-    username: req.body.username, 
+    username: username, 
     password: hash
   });
 
   try {
     await user.save();
+    mongoose.model("Item", itemSchema, username);
     res.status(201).json({message: "User saved"});
   }
   catch (err) {
@@ -38,8 +52,9 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
-  const hash = bcrypt.hashSync(req.body.password, 10);
-
+  if (!req.body.username || !req.body.password) {
+    return res.status(400).json({message: "Username or password is not given."});
+  }
   try {
     const user = await new Promise((res, rej) => {
       User.findOne({username: req.body.username}, (err, user) => {
@@ -47,9 +62,11 @@ router.post("/signin", async (req, res) => {
         res(user);
       });
     });
+
     if (!user) {
       return res.status(401).json({message: "Username or password is incorrect."});
     }
+
     if (bcrypt.compareSync(req.body.password, user.password)) {
       const token = jwt.sign(
         {
