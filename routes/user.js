@@ -87,18 +87,4 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.delete("/:username", userAuth, async (req, res) => {
-  User.findOneAndRemove({username: req.params.username}, (err, user) => {
-    if (err) {
-      res.status(500).json({message: "Error while deleting user."});
-    } else {
-      if (user) {
-        res.status(200).json({message: "User deleted."});
-      } else {
-        res.status(400).json({message: "User with that ID not found."});
-      }
-    }
-  });
-});
-
 module.exports = router;
