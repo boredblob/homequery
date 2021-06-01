@@ -7,7 +7,6 @@ const User = require("../model/User");
 const itemSchema = require("../model/Item");
 
 const purify = require("../purify");
-const {userAuth} = require("../auth");
 
 router.post("/signup", async (req, res) => {
   if (!req.body.username || !req.body.password) {

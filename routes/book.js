@@ -5,8 +5,6 @@ const purify = require("../purify");
 const {userAuth} = require("../auth");
 const {find, save, remove, edit} = require("../collection");
 
-const Item = require("../model/Item");
-
 router.get("/:username/book/", userAuth, async (req, res) => {
   const books = await find({type: "book"}, req.params.username);
   res.status(200).json(books);

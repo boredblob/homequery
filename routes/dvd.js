@@ -5,8 +5,6 @@ const purify = require("../purify");
 const {userAuth} = require("../auth");
 const {find, save, remove, edit} = require("../collection");
 
-const Item = require("../model/Item");
-
 router.get("/:username/dvd/", userAuth, async (req, res) => {
   const dvds = await find({type: "dvd"}, req.params.username);
   res.status(200).json(dvds);

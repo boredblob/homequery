@@ -1,7 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-require("dotenv").config();
 
 const dvdRoute = require("./routes/dvd");
 const bookRoute = require("./routes/book");

@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/omerismyname/homequery#readme",
   "dependencies": {
-    "@hapi/joi": "^17.1.0",
     "bcrypt": "^5.0.0",
     "dompurify": "^2.0.17",
     "dotenv": "^8.2.0",
